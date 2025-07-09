@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -140,6 +140,9 @@ vim.opt.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+
+-- Set the browser
+vim.g.mkdp_browser = 'safari'
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
@@ -244,7 +247,8 @@ require('lazy').setup({
 
   -- My Plugins
   {
-    'ThePrimeagen/vim-be-good',
+    'nvim-web-devicons',
+    enabled = true,
   },
   {
     'nvim-neo-tree/neo-tree.nvim',
@@ -259,10 +263,6 @@ require('lazy').setup({
     opts = {},
   },
   {
-    'nvim-tree/nvim-web-devicons',
-    opts = {},
-  },
-  {
     'github/copilot.vim',
     config = function()
       vim.g.copilot_no_tab_map = true
@@ -273,7 +273,16 @@ require('lazy').setup({
     'f-person/auto-dark-mode.nvim',
     opts = {},
   },
-
+  {
+    'iamcco/markdown-preview.nvim',
+    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
+    build = 'cd app && yarn install',
+    init = function()
+      vim.g.mkdp_browser = 'safari'
+      vim.g.mkdp_filetypes = { 'markdown' }
+    end,
+    ft = { 'markdown' },
+  },
   -- Alternatively, use `config = function() ... end` for full control over the configuration.
   -- If you prefer to call `setup` explicitly, use:
   --    {
@@ -1052,5 +1061,16 @@ require('lazy').setup({
   },
 })
 
+-- Auto-open Neo-tree when starting nvim
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    -- Only open Neo-tree if no file was specified on the command line
+    if vim.fn.argc() == 0 then
+      vim.cmd 'Neotree show'
+    end
+  end,
+})
+
+-- font settings:
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
